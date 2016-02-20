@@ -1,5 +1,5 @@
 /*
- * $Id: example.c,v 1.1 2016/02/20 06:28:58 urs Exp $
+ * $Id: example.c,v 1.2 2016/02/20 06:29:59 urs Exp $
  */
 
 #include <stdlib.h>
@@ -22,15 +22,10 @@ int main(int argc, char **argv)
 	if (argc > 2)
 		exc_bar = atoi(argv[2]);
 
-	if ((exc = setjmp(jb_add()->jb)) == 0) {
+	TRY {
 		printf("calling fun()\n");
 		printf("fun = %d\n", fun());
-	}
-	jb_del();
-	switch (exc) {
-	case 0:
-		// no exception
-		break;
+	} CATCH {
 	default:
 		// catch all
 		printf("main: exception %d\n", exc);
@@ -43,18 +38,13 @@ static int fun(void)
 {
 	int exc;
 
-	if ((exc = setjmp(jb_add()->jb)) == 0) {
+	TRY {
 		printf("calling foo()\n");
 		printf("foo = %d\n", foo());
-	}
-	jb_del();
-	switch (exc) {
-	case 0:
-		// no exception
-		break;
+	} CATCH {
 	default:
 		// re-throw exception
-		longjmp(jblist->jb, exc);
+		THROW(exc);
 	case 3:
 	case 4:
 	case 103:
@@ -71,20 +61,15 @@ static int foo(void)
 {
 	int exc;
 
-	if ((exc = setjmp(jb_add()->jb)) == 0) {
+	TRY {
 		if (exc_foo)
-			longjmp(jblist->jb, exc_foo);
+			THROW(exc_foo);
 		printf("calling bar()\n");
 		printf("bar = %d\n", bar());
-	}
-	jb_del();
-	switch (exc) {
-	case 0:
-		// no exception
-		break;
+	} CATCH {
 	default:
 		// re-throw exception
-		longjmp(jblist->jb, exc);
+		THROW(exc);
 	case 1:
 	case 2:
 	case 101:
@@ -100,7 +85,7 @@ static int foo(void)
 static int bar(void)
 {
 	if (exc_bar)
-		longjmp(jblist->jb, exc_bar + 100);
+		THROW(exc_bar + 100);
 
 	return 3;
 }
