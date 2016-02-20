@@ -1,5 +1,5 @@
 /*
- * $Id: ex.c,v 1.2 2016/02/20 06:28:48 urs Exp $
+ * $Id: example.c,v 1.1 2016/02/20 06:28:58 urs Exp $
  */
 
 #include <stdlib.h>
