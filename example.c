@@ -1,5 +1,5 @@
 /*
- * $Id: example.c,v 1.2 2016/02/20 06:29:59 urs Exp $
+ * $Id: example.c,v 1.3 2016/02/20 06:31:01 urs Exp $
  */
 
 #include <stdlib.h>
@@ -22,10 +22,10 @@ int main(int argc, char **argv)
 	if (argc > 2)
 		exc_bar = atoi(argv[2]);
 
-	TRY {
+	TRY(exc) {
 		printf("calling fun()\n");
 		printf("fun = %d\n", fun());
-	} CATCH {
+	} CATCH(exc) {
 	default:
 		// catch all
 		printf("main: exception %d\n", exc);
@@ -38,10 +38,10 @@ static int fun(void)
 {
 	int exc;
 
-	TRY {
+	TRY(exc) {
 		printf("calling foo()\n");
 		printf("foo = %d\n", foo());
-	} CATCH {
+	} CATCH(exc) {
 	default:
 		// re-throw exception
 		THROW(exc);
@@ -61,12 +61,12 @@ static int foo(void)
 {
 	int exc;
 
-	TRY {
+	TRY(exc) {
 		if (exc_foo)
 			THROW(exc_foo);
 		printf("calling bar()\n");
 		printf("bar = %d\n", bar());
-	} CATCH {
+	} CATCH(exc) {
 	default:
 		// re-throw exception
 		THROW(exc);
