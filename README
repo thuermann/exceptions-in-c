@@ -1,2 +1,31 @@
 This is a short demo on how to use setjmp() and longjmp() in C to
 imitate exceptions, in a similar way as in C++.
+
+Usage:
+
+// Provide a variable to hold exception codes (must be int)
+int exc;
+TRY (exc) {
+	foo();
+} CATCH (exc) {
+default: // re-throw unhandled exceptions
+	// do some local cleanups here if necessary
+	...
+	THROW(exc);
+case 1: // Handle exception 1
+	...
+	break;
+case 2: // Handle exception 2
+	...
+	break;
+...
+}
+
+void foo(void)
+{
+	if (some_exceptional_condition)
+		THROW(1);
+}
+
+Unhandled exceptions in a CATCH block *must* be re-thrown by THROW(exc).
+Otherwise, the exception isn't passed on to the next higher TRY block.
